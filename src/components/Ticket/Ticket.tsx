@@ -1,16 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
+import { Ticket as TicketType } from "../../context/projectsData";
 import "./Ticket.scss";
-type Props = {};
+import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 
-export default function Ticket({}: Props) {
+type Props = {
+    ticket: TicketType;
+    provided: DraggableProvided;
+    snapshot: DraggableStateSnapshot;
+};
+
+export default function Ticket({ ticket, provided, snapshot }: Props) {
+    const [showSubtask, setShowSubtask] = useState(false);
+
     return (
-        <div className="ticket">
-            <h3>This is a ticket</h3>
-            <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quas,
-                sed.
-            </p>
-            <p>3 subtasks</p>
+        <div
+            className="ticket"
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            // @ts-ignore
+            active={snapshot.isDragging.toString()}
+            onClick={() => setShowSubtask(!showSubtask)}
+        >
+            <h3>{ticket.title}</h3>
+            <p>{ticket.description}</p>
+            <p>{ticket.tasks.length}</p>
+            {showSubtask && (
+                <ul>
+                    {ticket.tasks.map((task) => (
+                        <li>{task}</li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }
